@@ -1,0 +1,20 @@
+[Defines]
+    INF_VERSION = 0x00010006
+    BASE_NAME = ShiehBoot
+    FILE_GUID = cda52c8a-9984-4506-937c-2627743a05bc
+    MODULE_TYPE = UEFI_APPLICATION
+    VERSION_STRING = 0.1
+    ENTRY_POINT = BootMain
+
+[Sources]
+    ShiehBoot.c
+    Protocols.c
+    Utils.c
+    Video.c
+
+[Packages]
+    MdePkg/MdePkg.dec
+
+[LibraryClasses]
+    UefiApplicationEntryPoint
+    UefiLib
