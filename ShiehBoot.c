@@ -2,16 +2,18 @@
 
 EFI_STATUS
 EFIAPI
-BootMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable){
+BootMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
+{
     EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutputProtocol=
     getGraphicsOutputProtocol(ImageHandle);
     //tryToReadFile(ImageHandle);
 
-
     VideoConfig videoConfig;
     initVideo(ImageHandle,graphicsOutputProtocol,&videoConfig);
-    //drawLogo(ImageHandle);
-    
+    drawLogo(ImageHandle,graphicsOutputProtocol);
+    for (int i = 1; i < 11;i++){
+        drawProgress(graphicsOutputProtocol, i);
+    }
     return 0;
 }
 
@@ -51,16 +53,16 @@ tryToReadFile(IN EFI_HANDLE ImageHandle){
     Status=FileSystem->OpenVolume(FileSystem,&file);
     
     EFI_FILE_PROTOCOL *iconFile=NULL;
-    Status=file->Open(file,&iconFile,BOOT_ICON,EFI_FILE_MODE_READ,EFI_FILE_ARCHIVE);
+    Status=file->Open(file,&iconFile,BOOT_LOGO,EFI_FILE_MODE_READ,EFI_FILE_ARCHIVE);
 
 
 
 
     if(EFI_ERROR(Status)){
         if(statusCodeEqualsTo(Status,14)){
-            Print(L"Error: Failed to open file: \"%s\" (not found).\n", BOOT_ICON);
+            Print(L"Error: Failed to open file: \"%s\" (not found).\n", BOOT_LOGO);
         }else{
-            Print(L"Error: Failed to open file: \"%s\" Status: %d\n", BOOT_ICON, Status);
+            Print(L"Error: Failed to open file: \"%s\" Status: %d\n", BOOT_LOGO, Status);
         }
     }
     return Status;

@@ -11,11 +11,13 @@ typedef struct
     UINT32                     HorizontalResolution;
     UINT32                     VerticalResolution;
     UINT32                     PixelsPerScanLine;
-} VideoConfig;
+}VideoConfig;
+
+//VideoConfig *videoConfig;
 
 EFI_STATUS
 EFIAPI
-initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutputProtocol, VideoConfig *config);
+initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutputProtocol, VideoConfig *videoConfig);
 
 EFI_STATUS setResolution(
     IN EFI_GRAPHICS_OUTPUT_PROTOCOL *protocol,

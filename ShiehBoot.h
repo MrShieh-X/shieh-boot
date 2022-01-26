@@ -1,10 +1,11 @@
 #include <Uefi.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include "ConstantFiles.h"
-#include "Utils.h"
-#include "Protocols.h"
-#include "Video.h"
+#include "constants/ConstantFiles.h"
+#include "utils/Utils.h"
+#include "utils/Protocols.h"
+#include "ui/Video.h"
+#include "ui/BootingUI.h"
 
 EFI_STATUS
 EFIAPI

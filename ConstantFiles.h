@@ -1,1 +1,0 @@
-#define BOOT_ICON L"\\resources\\images\\boot_icon.bmp"

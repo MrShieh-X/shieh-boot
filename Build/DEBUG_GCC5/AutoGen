@@ -1,0 +1,7 @@
+/mnt/hgfs/share/edk2/Conf/build_rule.txt
+/mnt/hgfs/share/edk2/Conf/tools_def.txt
+/mnt/hgfs/share/edk2/MdePkg/MdePkg.dec
+/mnt/hgfs/share/edk2/ShiehBootPkg/Build/DEBUG_GCC5/BuildOptions
+/mnt/hgfs/share/edk2/ShiehBootPkg/Build/DEBUG_GCC5/PcdTokenNumber
+/mnt/hgfs/share/edk2/ShiehBootPkg/Build/DEBUG_GCC5/X64/TOOLS_DEF.X64
+/mnt/hgfs/share/edk2/ShiehBootPkg/ShiehBootPkg.dsc

@@ -8,9 +8,11 @@
 
 [Sources]
     ShiehBoot.c
-    Protocols.c
-    Utils.c
-    Video.c
+    utils/Protocols.c
+    utils/Utils.c
+    utils/File.c
+    ui/Video.c
+    ui/BootingUI.c
 
 [Packages]
     MdePkg/MdePkg.dec
@@ -18,3 +20,6 @@
 [LibraryClasses]
     UefiApplicationEntryPoint
     UefiLib
+
+[Guids]
+    gEfiFileInfoGuid
