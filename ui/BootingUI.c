@@ -14,7 +14,7 @@ EFI_STATUS drawProgress(
     UINTN StartX = (Gop->Mode->Info->HorizontalResolution - (BlockWidth + GAP) * 10 - GAP) / 2;
     UINTN StartY = (Gop->Mode->Info->VerticalResolution * 3) >> 2;
 
-    UINTN X = StartX + (BlockWidth + GAP) * Progress;
+    UINTN X = StartX + (BlockWidth + GAP) * (Progress-1);
 
     Status = Gop->Blt(Gop, &White, EfiBltVideoFill, 0, 0, X, StartY, BlockWidth, BlockHeight, 0);
 
