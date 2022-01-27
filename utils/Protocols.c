@@ -86,7 +86,7 @@ EFI_FILE_PROTOCOL *getFileProtocol(
 {
     EFI_FILE_PROTOCOL *Root;
 
-    Print(L"File: Opening the volume for file: %s\n",FileName);
+    //Print(L"File: Opening the volume for file: %s\n",FileName);
     *Status = SimpleFileSystemProtocol->OpenVolume(
         SimpleFileSystemProtocol,
         &Root);
@@ -97,7 +97,7 @@ EFI_FILE_PROTOCOL *getFileProtocol(
     }
     //Print(L"Opened the volume\n");
 
-    Print(L"File: Opening the file: %s\n",FileName);
+    //Print(L"File: Opening the file: %s\n",FileName);
     EFI_FILE_PROTOCOL *FileProtocol;
     *Status = Root->Open(
         Root,

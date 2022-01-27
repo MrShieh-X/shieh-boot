@@ -14,7 +14,36 @@ BootMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     for (int i = 1; i < 11;i++){
         drawProgress(graphicsOutputProtocol, i);
     }
+
+    //executeKernel(ImageHandle);
+    EFI_PHYSICAL_ADDRESS KernelEntry;
+    Relocate(ImageHandle, &KernelEntry);
     return 0;
+}
+
+EFI_STATUS
+executeKernel(IN EFI_HANDLE ImageHandle){
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfsp=getSimpleFileSystemProtocol(ImageHandle);
+    EFI_STATUS Status = EFI_SUCCESS;
+    if(sfsp==NULL){
+        Print(L"Failed to load kernel: Unable to getSimpleFileSystemProtocol\n");
+        return EFI_LOAD_ERROR;
+    }
+    EFI_FILE_PROTOCOL *file = getFileProtocol(sfsp, SIMPLE_KERNEL, EFI_FILE_MODE_READ, &Status);
+    if (EFI_ERROR(Status))
+    {
+        Print(L"Unable to open kernel: Failed to getFileProtocol.\n");
+        return Status;
+    }
+    EFI_PHYSICAL_ADDRESS kernelAddress;
+    Status = ReadFile(file, SIMPLE_KERNEL, &kernelAddress);
+    if (EFI_ERROR(Status))
+    {
+        Print(L"Unable to open kernel: Failed to readFile.\n");
+        return Status;
+    }
+    asm("jmp %0": : "m"(kernelAddress));
+    return Status;
 }
 
 EFI_STATUS
@@ -55,8 +84,7 @@ tryToReadFile(IN EFI_HANDLE ImageHandle){
     EFI_FILE_PROTOCOL *iconFile=NULL;
     Status=file->Open(file,&iconFile,BOOT_LOGO,EFI_FILE_MODE_READ,EFI_FILE_ARCHIVE);
 
-
-
+    
 
     if(EFI_ERROR(Status)){
         if(statusCodeEqualsTo(Status,14)){

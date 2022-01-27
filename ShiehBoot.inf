@@ -13,6 +13,7 @@
     utils/File.c
     ui/Video.c
     ui/BootingUI.c
+    elf/Elf.c
 
 [Packages]
     MdePkg/MdePkg.dec

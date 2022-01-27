@@ -6,7 +6,11 @@
 #include "utils/Protocols.h"
 #include "ui/Video.h"
 #include "ui/BootingUI.h"
+#include "elf/Elf.h"
 
 EFI_STATUS
 EFIAPI
 tryToReadFile(IN EFI_HANDLE ImageHandle);
+
+EFI_STATUS
+executeKernel(IN EFI_HANDLE ImageHandle);

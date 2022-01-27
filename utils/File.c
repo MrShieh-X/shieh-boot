@@ -5,11 +5,11 @@ EFI_STATUS ReadFile(
     IN CHAR16 *FileName,
     OUT EFI_PHYSICAL_ADDRESS *FileBase)
 {
-    Print(L"File: Reading file: %s\n", FileName);
+    //Print(L"File: Reading file: %s\n", FileName);
     EFI_STATUS Status = EFI_SUCCESS;
     EFI_FILE_INFO *FileInfo;
 
-    //Print(L"File: Allocating pool for file info (file: %s)", FileName);
+    //Print(L"File: Allocating pool for file info (file: %s)\n", FileName);
 
     UINTN InfoSize = sizeof(EFI_FILE_INFO) + 128;
     Status = gBS->AllocatePool(
