@@ -16,12 +16,13 @@ BootMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     }
 
     //executeKernel(ImageHandle);
-    EFI_PHYSICAL_ADDRESS KernelEntry;
-    Relocate(ImageHandle, &KernelEntry);
+    //EFI_PHYSICAL_ADDRESS KernelEntry;
+    //Relocate(ImageHandle, &KernelEntry);
+    loadKernel(ImageHandle, &videoConfig);
     return 0;
 }
 
-EFI_STATUS
+/*EFI_STATUS
 executeKernel(IN EFI_HANDLE ImageHandle){
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfsp=getSimpleFileSystemProtocol(ImageHandle);
     EFI_STATUS Status = EFI_SUCCESS;
@@ -44,7 +45,7 @@ executeKernel(IN EFI_HANDLE ImageHandle){
     }
     asm("jmp %0": : "m"(kernelAddress));
     return Status;
-}
+}*/
 
 EFI_STATUS
 EFIAPI

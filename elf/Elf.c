@@ -1,5 +1,30 @@
 #include "Elf.h"
 
+EFI_STATUS loadKernel(
+    IN EFI_HANDLE ImageHandle,
+    IN VideoConfig *videoConfig)
+{
+    EFI_PHYSICAL_ADDRESS KernelEntryPoint;
+    EFI_STATUS Status = Relocate(ImageHandle, &KernelEntryPoint);
+    if (EFI_ERROR(Status))
+    {
+        return Status;
+    }
+    BootConfig bootConfig = {.FrameBufferBase = videoConfig->FrameBufferBase,
+                             .FrameBufferSize = videoConfig->FrameBufferSize,
+                             .HorizontalResolution = videoConfig->HorizontalResolution,
+                             .VerticalResolution = videoConfig->VerticalResolution,
+                             .videoConfig = videoConfig,};
+
+    Print(L"Executing kernel...\n");
+    UINT64 (*KernelEntry)
+    (BootConfig * bootConfig) = (UINT64(*)(BootConfig * bootConfig)) KernelEntryPoint;
+    UINT64 x = KernelEntry(&bootConfig);
+
+    Print(L"Returned value from kernel: %d\n", x);
+    return EFI_SUCCESS;
+}
+
 EFI_STATUS Relocate(
     IN EFI_HANDLE ImageHandle,
     OUT EFI_PHYSICAL_ADDRESS *KernelEntry)
@@ -50,7 +75,7 @@ EFI_STATUS CheckELF(
     {
         Print(L"Unable to load kernel: Kernel is not an ELF file!\n");
         Status = NOT_ELF;
-    return Status;
+        return Status;
     }
     UINT8 Format = GetValue(KernelBuffer, 0x04, 1);
     if (Format != ELF_64)
@@ -98,7 +123,7 @@ EFI_STATUS LoadSegments(
 
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to allocate pages for kernelRelocateBuffer. Status: %d\n",Status);
+        Print(L"Error: Failed to allocate pages for kernelRelocateBuffer. Status: %d\n", Status);
         return Status;
     }
     UINT64 RelocateOffset = KernelRelocateBase - LowAddr;
@@ -126,7 +151,6 @@ EFI_STATUS LoadSegments(
         }
     }
     *KernelEntry = ElfHeader->Entry + RelocateOffset;
-
 
     if (EFI_ERROR(Status))
     {

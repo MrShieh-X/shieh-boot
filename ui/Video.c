@@ -6,7 +6,7 @@ initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutpu
 {
    Print(L"Start to init video\n");
    EFI_STATUS Status = EFI_SUCCESS;
-   Status = setResolution(graphicsOutputProtocol,ImageHandle);
+   //Status = setResolution(graphicsOutputProtocol,ImageHandle);
 
    Print(L"Video: Writing video configurations to VideoConfig...\n");
    videoConfig->FrameBufferBase = graphicsOutputProtocol->Mode->FrameBufferBase;

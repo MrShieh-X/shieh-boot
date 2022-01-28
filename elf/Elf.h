@@ -5,12 +5,21 @@
 #include "utils/Utils.h"
 #include "constants/ConstantFiles.h"
 #include "utils/Protocols.h"
+#include "Video.h"
 
 #define ELF_32 1
 #define ELF_64 2
 #define NOT_ELF -1
 #define NOT_64_BIT -2
 #define PT_LOAD 1
+
+typedef struct{
+    EFI_PHYSICAL_ADDRESS FrameBufferBase;
+    UINT64 FrameBufferSize;
+    UINT64 HorizontalResolution;
+    UINT64 VerticalResolution;
+    VideoConfig *videoConfig;
+} BootConfig;
 
 typedef struct
 {
@@ -86,13 +95,19 @@ typedef struct
 
 } PROGRAM_HEADER_64;
 
+EFI_STATUS loadKernel(
+    IN EFI_HANDLE ImageHandle,
+    IN VideoConfig *videoConfig);
+
 EFI_STATUS Relocate(
     IN EFI_HANDLE ImageHandle,
     OUT EFI_PHYSICAL_ADDRESS *KernelEntry);
 
 EFI_STATUS CheckELF(
-    IN EFI_PHYSICAL_ADDRESS KernelBuffer);
+    IN EFI_PHYSICAL_ADDRESS KernelBuffer
+);
 
 EFI_STATUS LoadSegments(
     IN EFI_PHYSICAL_ADDRESS KernelBufferBase,
-    OUT EFI_PHYSICAL_ADDRESS *KernelEntry);
+    OUT EFI_PHYSICAL_ADDRESS *KernelEntry
+);
