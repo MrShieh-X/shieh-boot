@@ -2,19 +2,23 @@
 
 EFI_STATUS loadKernel(
     IN EFI_HANDLE ImageHandle,
-    IN VideoConfig *videoConfig)
+    IN VideoConfig *videoConfig,
+    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop)
 {
     EFI_PHYSICAL_ADDRESS KernelEntryPoint;
-    EFI_STATUS Status = Relocate(ImageHandle, &KernelEntryPoint);
+    EFI_STATUS Status = Relocate(ImageHandle, &KernelEntryPoint, Gop);
     if (EFI_ERROR(Status))
     {
         return Status;
     }
-    BootConfig bootConfig = {.FrameBufferBase = videoConfig->FrameBufferBase,
-                             .FrameBufferSize = videoConfig->FrameBufferSize,
-                             .HorizontalResolution = videoConfig->HorizontalResolution,
-                             .VerticalResolution = videoConfig->VerticalResolution,
-                             .videoConfig = videoConfig,};
+
+    BootConfig bootConfig = {//.FrameBufferBase = videoConfig->FrameBufferBase,
+                             //.FrameBufferSize = videoConfig->FrameBufferSize,
+                             //.HorizontalResolution = videoConfig->HorizontalResolution,
+                             //.VerticalResolution = videoConfig->VerticalResolution,
+                             .videoConfig = *videoConfig,
+                             .ascii = getAscii(ImageHandle, videoConfig)};
+    addProgress(Gop);
 
     Print(L"Executing kernel...\n");
     UINT64 (*KernelEntry)
@@ -25,9 +29,50 @@ EFI_STATUS loadKernel(
     return EFI_SUCCESS;
 }
 
+BMPConfig getAscii(
+    IN EFI_HANDLE ImageHandle,
+    IN VideoConfig *videoConfig){
+
+    EFI_STATUS Status = EFI_SUCCESS;
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *simpleFileSystemProtocol = getSimpleFileSystemProtocol(ImageHandle);
+    //EFI_STATUS Status;
+    EFI_FILE_PROTOCOL *fp = getFileProtocol(simpleFileSystemProtocol, ASCII, EFI_FILE_MODE_READ, &Status);
+    EFI_PHYSICAL_ADDRESS address;
+
+    BMPConfig config;
+
+    if ((fp) == NULL)
+    {
+        Print(L"Unable to read ASCII bmp file: Unable to get file protocol, status: %d\n", Status);
+        config.Height = -1;
+        config.Width = -1;
+        return config;
+    }
+
+    Status = ReadFile(fp, ASCII, &address);
+    if (EFI_ERROR(Status))
+    {
+        Print(L"Unable to read ASCII bmp file: Unable to read file\n");
+        config.Height = -1;
+        config.Width = -1;
+        return config;
+    }
+
+    Status = BmpTransform(address, &config, ASCII);
+    if (EFI_ERROR(Status))
+    {
+        Print(L"Unable to read ASCII bmp file: Unable to execute bmp (BmpTransform)\n");
+        config.Height = -1;
+        config.Width = -1;
+        return config;
+    }
+    return config;
+}
+
 EFI_STATUS Relocate(
     IN EFI_HANDLE ImageHandle,
-    OUT EFI_PHYSICAL_ADDRESS *KernelEntry)
+    OUT EFI_PHYSICAL_ADDRESS *KernelEntry,
+    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop)
 {
     Print(L"Reading kernel...\n");
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfsp = getSimpleFileSystemProtocol(ImageHandle);
@@ -50,6 +95,7 @@ EFI_STATUS Relocate(
         Print(L"Unable to load kernel: Failed to readFile.\n");
         return Status;
     }
+    addProgress(Gop);
 
     Print(L"Checking kernel...\n");
 
@@ -58,10 +104,12 @@ EFI_STATUS Relocate(
     {
         return Status;
     }
+    addProgress(Gop);
 
     Print(L"Loading segments for kernel...\n");
 
     Status = LoadSegments(kernelAddress, KernelEntry);
+    addProgress(Gop);
     return Status;
 }
 

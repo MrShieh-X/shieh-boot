@@ -14,11 +14,8 @@
 #define PT_LOAD 1
 
 typedef struct{
-    EFI_PHYSICAL_ADDRESS FrameBufferBase;
-    UINT64 FrameBufferSize;
-    UINT64 HorizontalResolution;
-    UINT64 VerticalResolution;
-    VideoConfig *videoConfig;
+    VideoConfig videoConfig;
+    BMPConfig ascii;
 } BootConfig;
 
 typedef struct
@@ -95,13 +92,20 @@ typedef struct
 
 } PROGRAM_HEADER_64;
 
-EFI_STATUS loadKernel(
+BMPConfig getAscii(
     IN EFI_HANDLE ImageHandle,
     IN VideoConfig *videoConfig);
 
+EFI_STATUS loadKernel(
+    IN EFI_HANDLE ImageHandle,
+    IN VideoConfig *videoConfig,
+    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
+);
+
 EFI_STATUS Relocate(
     IN EFI_HANDLE ImageHandle,
-    OUT EFI_PHYSICAL_ADDRESS *KernelEntry);
+    OUT EFI_PHYSICAL_ADDRESS *KernelEntry,
+    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop);
 
 EFI_STATUS CheckELF(
     IN EFI_PHYSICAL_ADDRESS KernelBuffer

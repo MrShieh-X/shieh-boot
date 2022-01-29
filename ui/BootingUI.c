@@ -1,17 +1,17 @@
 #include "BootingUI.h"
 
-int GAP = 0;
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL White = {0xFF, 0xFF, 0xFF, 0};
 
-EFI_STATUS drawProgress(
-    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
-    IN UINTN Progress
+UINTN Progress = 0;
+EFI_STATUS addProgress(
+    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
 ){
+    Progress++;
     EFI_STATUS Status = EFI_SUCCESS;
 
     UINTN BlockWidth = Gop->Mode->Info->HorizontalResolution >> 5;
     UINTN BlockHeight = Gop->Mode->Info->VerticalResolution >> 6;
-    UINTN StartX = (Gop->Mode->Info->HorizontalResolution - (BlockWidth + GAP) * 10 - GAP) / 2;
+    UINTN StartX = (Gop->Mode->Info->HorizontalResolution - (BlockWidth + GAP) * MAX_PROGRESS - GAP) / 2;
     UINTN StartY = (Gop->Mode->Info->VerticalResolution * 3) >> 2;
 
     UINTN X = StartX + (BlockWidth + GAP) * (Progress-1);
@@ -60,6 +60,7 @@ EFI_STATUS drawLogo(IN EFI_HANDLE ImageHandle,
         Print(L"Unable to draw boot logo: Unable to read file\n");
         return Status;
     }
+    addProgress(gop);
 
     BMPConfig config;
     Status = BmpTransform(LogoAddress, &config, Logo);
@@ -68,11 +69,13 @@ EFI_STATUS drawLogo(IN EFI_HANDLE ImageHandle,
         Print(L"Unable to draw boot logo: Unable to execute bmp (BmpTransform)\n");
         return Status;
     }
+    addProgress(gop);
 
     UINTN X = (Horizontal - config.Width) / 2;
     UINTN Y = (Vertical - config.Height) / 2 - (Vertical / 7);
 
     Status = DrawBmp(gop, config, X, Y);
+    addProgress(gop);
 
     return Status;
 }

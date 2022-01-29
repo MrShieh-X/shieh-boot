@@ -7,6 +7,7 @@ initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutpu
    Print(L"Start to init video\n");
    EFI_STATUS Status = EFI_SUCCESS;
    //Status = setResolution(graphicsOutputProtocol,ImageHandle);
+   addProgress(graphicsOutputProtocol);
 
    Print(L"Video: Writing video configurations to VideoConfig...\n");
    videoConfig->FrameBufferBase = graphicsOutputProtocol->Mode->FrameBufferBase;
@@ -14,6 +15,8 @@ initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutpu
    videoConfig->HorizontalResolution = graphicsOutputProtocol->Mode->Info->HorizontalResolution;
    videoConfig->VerticalResolution = graphicsOutputProtocol->Mode->Info->VerticalResolution;
    videoConfig->PixelsPerScanLine = graphicsOutputProtocol->Mode->Info->PixelsPerScanLine;
+
+   addProgress(graphicsOutputProtocol);
    Print(L"Video: FrameBufferSize: %d\n", videoConfig->FrameBufferSize);
    Print(L"Video: HorizontalResolution: %d\n", videoConfig->HorizontalResolution);
    Print(L"Video: VerticalResolution: %d\n", videoConfig->VerticalResolution);

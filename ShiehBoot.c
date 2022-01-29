@@ -8,17 +8,20 @@ BootMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     getGraphicsOutputProtocol(ImageHandle);
     //tryToReadFile(ImageHandle);
 
+    addProgress(graphicsOutputProtocol);
+    
     VideoConfig videoConfig;
     initVideo(ImageHandle,graphicsOutputProtocol,&videoConfig);
+
     drawLogo(ImageHandle,graphicsOutputProtocol);
-    for (int i = 1; i < 11;i++){
-        drawProgress(graphicsOutputProtocol, i);
-    }
+    //for (int i = 1; i < 11;i++){
+    //}
+    
 
     //executeKernel(ImageHandle);
     //EFI_PHYSICAL_ADDRESS KernelEntry;
     //Relocate(ImageHandle, &KernelEntry);
-    loadKernel(ImageHandle, &videoConfig);
+    loadKernel(ImageHandle, &videoConfig, graphicsOutputProtocol);
     return 0;
 }
 
