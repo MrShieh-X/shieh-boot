@@ -4,12 +4,12 @@ EFI_STATUS
 EFIAPI
 initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutputProtocol, VideoConfig *videoConfig)
 {
-   Print(L"Start to init video\n");
+   if(0)Print(L"Start to init video\n");
    EFI_STATUS Status = EFI_SUCCESS;
-   //Status = setResolution(graphicsOutputProtocol,ImageHandle);
+   Status = setResolution(graphicsOutputProtocol,ImageHandle);
    addProgress(graphicsOutputProtocol);
 
-   Print(L"Video: Writing video configurations to VideoConfig...\n");
+   if(0)Print(L"Video: Writing video configurations to VideoConfig...\n");
    videoConfig->FrameBufferBase = graphicsOutputProtocol->Mode->FrameBufferBase;
    videoConfig->FrameBufferSize = graphicsOutputProtocol->Mode->FrameBufferSize;
    videoConfig->HorizontalResolution = graphicsOutputProtocol->Mode->Info->HorizontalResolution;
@@ -17,10 +17,10 @@ initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutpu
    videoConfig->PixelsPerScanLine = graphicsOutputProtocol->Mode->Info->PixelsPerScanLine;
 
    addProgress(graphicsOutputProtocol);
-   Print(L"Video: FrameBufferSize: %d\n", videoConfig->FrameBufferSize);
-   Print(L"Video: HorizontalResolution: %d\n", videoConfig->HorizontalResolution);
-   Print(L"Video: VerticalResolution: %d\n", videoConfig->VerticalResolution);
-   Print(L"Video: PixelsPerScanLine: %d\n", videoConfig->PixelsPerScanLine);
+   if(0)Print(L"Video: FrameBufferSize: %d\n", videoConfig->FrameBufferSize);
+   if(0)Print(L"Video: HorizontalResolution: %d\n", videoConfig->HorizontalResolution);
+   if(0)Print(L"Video: VerticalResolution: %d\n", videoConfig->VerticalResolution);
+   if(0)Print(L"Video: PixelsPerScanLine: %d\n", videoConfig->PixelsPerScanLine);
 
    return Status;
 }
@@ -36,7 +36,7 @@ EFI_STATUS setResolution(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Protocol, IN EFI_HANDL
    UINTN ModeIndex = 0;
 
 
-   Print(L"Video: Looking for a appropriate screen resolution...\n");
+   if(0)Print(L"Video: Looking for a appropriate screen resolution...\n");
 
    for (UINTN i = 1; i < Protocol->Mode->MaxMode; i++)
    {
@@ -51,17 +51,17 @@ EFI_STATUS setResolution(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Protocol, IN EFI_HANDL
    }
 
    if (H == Protocol->Mode->Info->HorizontalResolution && V == Protocol->Mode->Info->VerticalResolution){
-      Print(L"Video: No need to modify screen resolution.\n");
+      if(0)Print(L"Video: No need to modify screen resolution.\n");
       return EFI_SUCCESS;
    }
 
    Status = Protocol->SetMode(Protocol, ModeIndex);
 
    if (EFI_ERROR(Status)){
-      Print(L"Video: Error: Failed to set resolution. Index: %d, width: %d, height: %d, status: %d\n", ModeIndex, H, V, Status);
+      if(0)Print(L"Video: Error: Failed to set resolution. Index: %d, width: %d, height: %d, status: %d\n", ModeIndex, H, V, Status);
       return Status;
    }
-   Print(L"Video: Set screen resolution to index: %d, width: %d, height: %d.\n", ModeIndex, H, V);
+   if(0)Print(L"Video: Set screen resolution to index: %d, width: %d, height: %d.\n", ModeIndex, H, V);
 
    return Status;
 }

@@ -15,7 +15,7 @@ EFI_GRAPHICS_OUTPUT_PROTOCOL *getGraphicsOutputProtocol(
         &Buffer
     );
     if(EFI_ERROR(Status)){
-        Print(L"Error: Failed to locate handle buffer: \"%s\" Status: %d\n", "GraphicsOutputProtocol", Status);
+        if(0)Print(L"Error: Failed to locate handle buffer: \"%s\" Status: %d\n", "GraphicsOutputProtocol", Status);
         return NULL;
     }
 
@@ -27,9 +27,9 @@ EFI_GRAPHICS_OUTPUT_PROTOCOL *getGraphicsOutputProtocol(
         ImageHandle,
         NULL,
         EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-    //Print(L"Status=%d\n",Status);
+    //if(0)Print(L"Status=%d\n",Status);
     if(EFI_ERROR(Status)){
-        Print(L"Error: Failed to open protocol: \"%s\" Status: %d\n", "GraphicsOutputProtocol", Status);
+        if(0)Print(L"Error: Failed to open protocol: \"%s\" Status: %d\n", "GraphicsOutputProtocol", Status);
         return NULL;
     }
     return GraphicsOutputProtocol;
@@ -49,7 +49,7 @@ EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *getSimpleFileSystemProtocol(
         &Buffer);
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to locate handle buffer: \"%s\" Status: %d\n", "SimpleFileSystemProtocol", Status);
+        if(0)Print(L"Error: Failed to locate handle buffer: \"%s\" Status: %d\n", "SimpleFileSystemProtocol", Status);
         return NULL;
     }
 
@@ -61,10 +61,10 @@ EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *getSimpleFileSystemProtocol(
         ImageHandle,
         NULL,
         EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-    //Print(L"Status=%d\n",Status);
+    //if(0)Print(L"Status=%d\n",Status);
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to open protocol: \"%s\" Status: %d\n", "SimpleFileSystemProtocol", Status);
+        if(0)Print(L"Error: Failed to open protocol: \"%s\" Status: %d\n", "SimpleFileSystemProtocol", Status);
         return NULL;
     }
     return sfs;
@@ -86,18 +86,18 @@ EFI_FILE_PROTOCOL *getFileProtocol(
 {
     EFI_FILE_PROTOCOL *Root;
 
-    //Print(L"File: Opening the volume for file: %s\n",FileName);
+    //if(0)Print(L"File: Opening the volume for file: %s\n",FileName);
     *Status = SimpleFileSystemProtocol->OpenVolume(
         SimpleFileSystemProtocol,
         &Root);
     if (EFI_ERROR(*Status))
     {
-        Print(L"Error: Failed to open volume for file: %s. Status: %d\n", FileName, *Status);
+        if(0)Print(L"Error: Failed to open volume for file: %s. Status: %d\n", FileName, *Status);
         return NULL;
     }
-    //Print(L"Opened the volume\n");
+    //if(0)Print(L"Opened the volume\n");
 
-    //Print(L"File: Opening the file: %s\n",FileName);
+    //if(0)Print(L"File: Opening the file: %s\n",FileName);
     EFI_FILE_PROTOCOL *FileProtocol;
     *Status = Root->Open(
         Root,
@@ -110,11 +110,11 @@ EFI_FILE_PROTOCOL *getFileProtocol(
     {
         if (statusCodeEqualsTo(*Status, 14))
         {
-            Print(L"Error: Failed to open file: %s (not found).\n", FileName);
+            if(0)Print(L"Error: Failed to open file: %s (not found).\n", FileName);
         }
         else
         {
-            Print(L"Error: Failed to open file: %s, Status: %d\n", FileName, *Status);
+            if(0)Print(L"Error: Failed to open file: %s, Status: %d\n", FileName, *Status);
         }
         return NULL;
     }

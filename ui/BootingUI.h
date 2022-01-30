@@ -10,12 +10,12 @@
 
 typedef struct
 {
+    UINT64 PixelStart;
     UINTN Size;
     UINTN PageSize;
     UINTN Width;
     UINTN Height;
     UINTN Offset;
-    UINT64 PixelStart;
 } BMPConfig;
 
 EFI_STATUS addProgress(

@@ -30,20 +30,20 @@ executeKernel(IN EFI_HANDLE ImageHandle){
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfsp=getSimpleFileSystemProtocol(ImageHandle);
     EFI_STATUS Status = EFI_SUCCESS;
     if(sfsp==NULL){
-        Print(L"Failed to load kernel: Unable to getSimpleFileSystemProtocol\n");
+        if(0)Print(L"Failed to load kernel: Unable to getSimpleFileSystemProtocol\n");
         return EFI_LOAD_ERROR;
     }
     EFI_FILE_PROTOCOL *file = getFileProtocol(sfsp, SIMPLE_KERNEL, EFI_FILE_MODE_READ, &Status);
     if (EFI_ERROR(Status))
     {
-        Print(L"Unable to open kernel: Failed to getFileProtocol.\n");
+        if(0)Print(L"Unable to open kernel: Failed to getFileProtocol.\n");
         return Status;
     }
     EFI_PHYSICAL_ADDRESS kernelAddress;
     Status = ReadFile(file, SIMPLE_KERNEL, &kernelAddress);
     if (EFI_ERROR(Status))
     {
-        Print(L"Unable to open kernel: Failed to readFile.\n");
+        if(0)Print(L"Unable to open kernel: Failed to readFile.\n");
         return Status;
     }
     asm("jmp %0": : "m"(kernelAddress));
@@ -65,7 +65,7 @@ tryToReadFile(IN EFI_HANDLE ImageHandle){
         &SimpleFileSystemBuffer
     );//视频真机测试，SimpleFileSystemBuffer会返回两个，首个就是efi文件所在的盘
     if(EFI_ERROR(Status)){
-        Print(L"Error: Failed to locate handle buffer: \"%s\" Status: %d\n", L"SimpleFileSystemProtocol", Status);
+        if(0)Print(L"Error: Failed to locate handle buffer: \"%s\" Status: %d\n", L"SimpleFileSystemProtocol", Status);
         return Status;
     }
 
@@ -79,7 +79,7 @@ tryToReadFile(IN EFI_HANDLE ImageHandle){
         EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
     if(EFI_ERROR(Status)){
-        Print(L"Error: Failed to open protocol: \"%s\" Status: %d\n", L"SimpleFileSystemProtocol", Status);
+        if(0)Print(L"Error: Failed to open protocol: \"%s\" Status: %d\n", L"SimpleFileSystemProtocol", Status);
         return Status;
     }
     EFI_FILE_PROTOCOL *file=NULL;
@@ -92,9 +92,9 @@ tryToReadFile(IN EFI_HANDLE ImageHandle){
 
     if(EFI_ERROR(Status)){
         if(statusCodeEqualsTo(Status,14)){
-            Print(L"Error: Failed to open file: \"%s\" (not found).\n", BOOT_LOGO);
+            if(0)Print(L"Error: Failed to open file: \"%s\" (not found).\n", BOOT_LOGO);
         }else{
-            Print(L"Error: Failed to open file: \"%s\" Status: %d\n", BOOT_LOGO, Status);
+            if(0)Print(L"Error: Failed to open file: \"%s\" Status: %d\n", BOOT_LOGO, Status);
         }
     }
     return Status;

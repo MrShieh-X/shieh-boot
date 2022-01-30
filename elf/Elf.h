@@ -13,9 +13,11 @@
 #define NOT_64_BIT -2
 #define PT_LOAD 1
 
-typedef struct{
+typedef struct
+{
+    UINT64 AsciiPixelStart;
     VideoConfig videoConfig;
-    BMPConfig ascii;
+    BMPConfig *AsciiBmp;
 } BootConfig;
 
 typedef struct

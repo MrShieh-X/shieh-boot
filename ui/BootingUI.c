@@ -21,10 +21,10 @@ EFI_STATUS addProgress(
 
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to Blt progress. Progress: %d Status: %d\n", Progress, Status);
+        if(0)Print(L"Error: Failed to Blt progress. Progress: %d Status: %d\n", Progress, Status);
         return Status;
     }
-    //Print(L"Draw Progress: %d/10.\n", Step);
+    //if(0)Print(L"Draw Progress: %d/10.\n", Step);
 
 
     return Status;
@@ -33,7 +33,7 @@ EFI_STATUS addProgress(
 EFI_STATUS drawLogo(IN EFI_HANDLE ImageHandle, 
     EFI_GRAPHICS_OUTPUT_PROTOCOL *gop)
 {
-    Print(L"Drawing boot logo...\n");
+    if(0)Print(L"Drawing boot logo...\n");
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *simpleFileSystemProtocol=getSimpleFileSystemProtocol(ImageHandle);
 
     CHAR16 *Logo = BOOT_LOGO;
@@ -51,13 +51,13 @@ EFI_STATUS drawLogo(IN EFI_HANDLE ImageHandle,
     EFI_PHYSICAL_ADDRESS LogoAddress;
 
     if((fp)==NULL){
-        Print(L"Unable to draw boot logo: Unable to get file protocol, status: %d\n",Status);
+        if(0)Print(L"Unable to draw boot logo: Unable to get file protocol, status: %d\n",Status);
         return Status;
     }
 
     Status = ReadFile(fp,Logo, &LogoAddress);
     if(EFI_ERROR(Status)){
-        Print(L"Unable to draw boot logo: Unable to read file\n");
+        if(0)Print(L"Unable to draw boot logo: Unable to read file\n");
         return Status;
     }
     addProgress(gop);
@@ -66,7 +66,7 @@ EFI_STATUS drawLogo(IN EFI_HANDLE ImageHandle,
     Status = BmpTransform(LogoAddress, &config, Logo);
     if (EFI_ERROR(Status))
     {
-        Print(L"Unable to draw boot logo: Unable to execute bmp (BmpTransform)\n");
+        if(0)Print(L"Unable to draw boot logo: Unable to execute bmp (BmpTransform)\n");
         return Status;
     }
     addProgress(gop);
@@ -87,7 +87,7 @@ EFI_STATUS BmpTransform(
 {
     EFI_STATUS Status = EFI_SUCCESS;
     //struct bmp_header *bheader = (struct bmp_header *)BmpBase;
-    Print(L"Reading configurations from bmp file: %s\n",FileName);
+    if(0)Print(L"Reading configurations from bmp file: %s\n",FileName);
     BmpConfig->Size = GetValue(BmpBase, 0x02, 4);
     BmpConfig->PageSize = (BmpConfig->Size >> 12) + 1;
     BmpConfig->Offset = GetValue(BmpBase, 0x0A, 4);
@@ -95,7 +95,7 @@ EFI_STATUS BmpTransform(
     BmpConfig->Width = GetValue(BmpBase, 0x12, 4);
     BmpConfig->Height = GetValue(BmpBase, 0x16, 4);
 
-    Print(L"%s BMP: size = %08lx, pageSize = %08lx, offset = %08lx, width = %d, height = %d\n", FileName, BmpConfig->Size, BmpConfig->PageSize, BmpConfig->Offset, BmpConfig->Width, BmpConfig->Height);
+    if(0)Print(L"%s BMP: size = %08lx, pageSize = %08lx, offset = %08lx, width = %d, height = %d\n", FileName, BmpConfig->Size, BmpConfig->PageSize, BmpConfig->Offset, BmpConfig->Width, BmpConfig->Height);
 
     EFI_PHYSICAL_ADDRESS PixelStart;
     Status = gBS->AllocatePages(
@@ -104,14 +104,14 @@ EFI_STATUS BmpTransform(
         BmpConfig->PageSize,
         &PixelStart);
 
-    Print(L"Allocating pages for PixelArea\n");
+    if(0)Print(L"Allocating pages for PixelArea\n");
 
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to AllocatePages for PixelArea. Status: %d\n",Status);
+        if(0)Print(L"Error: Failed to AllocatePages for PixelArea. Status: %d\n",Status);
         return Status;
     }
-    //Print(L"SUCCESS:Memory for PixelArea is ready.\n");
+    //if(0)Print(L"SUCCESS:Memory for PixelArea is ready.\n");
 
 
     EFI_GRAPHICS_OUTPUT_BLT_PIXEL *PixelFromFile = (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)(BmpBase + BmpConfig->Offset + BmpConfig->Width * BmpConfig->Height * 4);
@@ -151,7 +151,7 @@ EFI_STATUS DrawBmp(
 
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to Blt BMP. Status: %d.\n", Status);
+        if(0)Print(L"Error: Failed to Blt BMP. Status: %d.\n", Status);
         return Status;
     }
     return Status;

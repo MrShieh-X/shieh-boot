@@ -12,16 +12,29 @@ EFI_STATUS loadKernel(
         return Status;
     }
 
+    BMPConfig asciiaa = getAscii(ImageHandle, videoConfig);
     BootConfig bootConfig = {//.FrameBufferBase = videoConfig->FrameBufferBase,
                              //.FrameBufferSize = videoConfig->FrameBufferSize,
                              //.HorizontalResolution = videoConfig->HorizontalResolution,
                              //.VerticalResolution = videoConfig->VerticalResolution,
+                             .AsciiPixelStart=asciiaa.PixelStart,
                              .videoConfig = *videoConfig,
-                             .ascii = getAscii(ImageHandle, videoConfig)};
+                             .AsciiBmp = &asciiaa};
+
+    /*for (UINT64 i; i <  640;i++)
+    {
+        UINT64 *start;
+    *start    = bootConfig.AsciiBmp.PixelStart + 6 * 640 + i;
+        Print("%d,",((lo)(*start)));
+    }*/
+
+    //Print(L"AsciiAddress: %lld\n", bootConfig.AsciiBmp->PixelStart);
+
     addProgress(Gop);
 
-    Print(L"Executing kernel...\n");
-    UINT64 (*KernelEntry)
+    if (0)
+        Print(L"Executing kernel...\n");
+    UINT64(*KernelEntry)
     (BootConfig * bootConfig) = (UINT64(*)(BootConfig * bootConfig)) KernelEntryPoint;
     UINT64 x = KernelEntry(&bootConfig);
 
@@ -31,7 +44,8 @@ EFI_STATUS loadKernel(
 
 BMPConfig getAscii(
     IN EFI_HANDLE ImageHandle,
-    IN VideoConfig *videoConfig){
+    IN VideoConfig *videoConfig)
+{
 
     EFI_STATUS Status = EFI_SUCCESS;
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *simpleFileSystemProtocol = getSimpleFileSystemProtocol(ImageHandle);
@@ -43,7 +57,8 @@ BMPConfig getAscii(
 
     if ((fp) == NULL)
     {
-        Print(L"Unable to read ASCII bmp file: Unable to get file protocol, status: %d\n", Status);
+        if (0)
+            Print(L"Unable to read ASCII bmp file: Unable to get file protocol, status: %d\n", Status);
         config.Height = -1;
         config.Width = -1;
         return config;
@@ -52,7 +67,8 @@ BMPConfig getAscii(
     Status = ReadFile(fp, ASCII, &address);
     if (EFI_ERROR(Status))
     {
-        Print(L"Unable to read ASCII bmp file: Unable to read file\n");
+        if (0)
+            Print(L"Unable to read ASCII bmp file: Unable to read file\n");
         config.Height = -1;
         config.Width = -1;
         return config;
@@ -61,7 +77,8 @@ BMPConfig getAscii(
     Status = BmpTransform(address, &config, ASCII);
     if (EFI_ERROR(Status))
     {
-        Print(L"Unable to read ASCII bmp file: Unable to execute bmp (BmpTransform)\n");
+        if (0)
+            Print(L"Unable to read ASCII bmp file: Unable to execute bmp (BmpTransform)\n");
         config.Height = -1;
         config.Width = -1;
         return config;
@@ -74,30 +91,35 @@ EFI_STATUS Relocate(
     OUT EFI_PHYSICAL_ADDRESS *KernelEntry,
     IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop)
 {
-    Print(L"Reading kernel...\n");
+    if (0)
+        Print(L"Reading kernel...\n");
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfsp = getSimpleFileSystemProtocol(ImageHandle);
     EFI_STATUS Status = EFI_SUCCESS;
     if (sfsp == NULL)
     {
-        Print(L"Failed to load kernel: Unable to getSimpleFileSystemProtocol\n");
+        if (0)
+            Print(L"Failed to load kernel: Unable to getSimpleFileSystemProtocol\n");
         return EFI_LOAD_ERROR;
     }
     EFI_FILE_PROTOCOL *file = getFileProtocol(sfsp, KERNEL, EFI_FILE_MODE_READ, &Status);
     if (EFI_ERROR(Status))
     {
-        Print(L"Unable to load kernel: Failed to getFileProtocol.\n");
+        if (0)
+            Print(L"Unable to load kernel: Failed to getFileProtocol.\n");
         return Status;
     }
     EFI_PHYSICAL_ADDRESS kernelAddress;
     Status = ReadFile(file, KERNEL, &kernelAddress);
     if (EFI_ERROR(Status))
     {
-        Print(L"Unable to load kernel: Failed to readFile.\n");
+        if (0)
+            Print(L"Unable to load kernel: Failed to readFile.\n");
         return Status;
     }
     addProgress(Gop);
 
-    Print(L"Checking kernel...\n");
+    if (0)
+        Print(L"Checking kernel...\n");
 
     Status = CheckELF(kernelAddress);
     if (EFI_ERROR(Status))
@@ -106,7 +128,8 @@ EFI_STATUS Relocate(
     }
     addProgress(Gop);
 
-    Print(L"Loading segments for kernel...\n");
+    if (0)
+        Print(L"Loading segments for kernel...\n");
 
     Status = LoadSegments(kernelAddress, KernelEntry);
     addProgress(Gop);
@@ -121,14 +144,16 @@ EFI_STATUS CheckELF(
     UINT32 Magic = GetValue(KernelBuffer, 0x00, 4);
     if (Magic != 0x464c457F)
     {
-        Print(L"Unable to load kernel: Kernel is not an ELF file!\n");
+        if (0)
+            Print(L"Unable to load kernel: Kernel is not an ELF file!\n");
         Status = NOT_ELF;
         return Status;
     }
     UINT8 Format = GetValue(KernelBuffer, 0x04, 1);
     if (Format != ELF_64)
     {
-        Print(L"Unable to load kernel: Kernel is not 64 bit!\n");
+        if (0)
+            Print(L"Unable to load kernel: Kernel is not 64 bit!\n");
         Status = NOT_64_BIT;
     }
 
@@ -171,7 +196,8 @@ EFI_STATUS LoadSegments(
 
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to allocate pages for kernelRelocateBuffer. Status: %d\n", Status);
+        if (0)
+            Print(L"Error: Failed to allocate pages for kernelRelocateBuffer. Status: %d\n", Status);
         return Status;
     }
     UINT64 RelocateOffset = KernelRelocateBase - LowAddr;
@@ -202,7 +228,8 @@ EFI_STATUS LoadSegments(
 
     if (EFI_ERROR(Status))
     {
-        Print(L"Error: Failed to load segments for kernel. Status: %d\n", Status);
+        if (0)
+            Print(L"Error: Failed to load segments for kernel. Status: %d\n", Status);
     }
     return Status;
 }
