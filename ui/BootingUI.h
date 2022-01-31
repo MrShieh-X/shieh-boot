@@ -8,15 +8,18 @@
 #define GAP 1
 #define MAX_PROGRESS 10
 
+#pragma pack(1)
 typedef struct
 {
-    UINT64 PixelStart;
     UINTN Size;
     UINTN PageSize;
     UINTN Width;
     UINTN Height;
     UINTN Offset;
+    UINT64 PixelStart;
 } BMPConfig;
+
+#pragma pack()
 
 EFI_STATUS addProgress(
     IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop);

@@ -13,12 +13,13 @@
 #define NOT_64_BIT -2
 #define PT_LOAD 1
 
+#pragma pack(1)
 typedef struct
 {
-    UINT64 AsciiPixelStart;
     VideoConfig videoConfig;
     BMPConfig *AsciiBmp;
 } BootConfig;
+#pragma pack()
 
 typedef struct
 {

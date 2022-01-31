@@ -17,7 +17,7 @@ EFI_STATUS loadKernel(
                              //.FrameBufferSize = videoConfig->FrameBufferSize,
                              //.HorizontalResolution = videoConfig->HorizontalResolution,
                              //.VerticalResolution = videoConfig->VerticalResolution,
-                             .AsciiPixelStart=asciiaa.PixelStart,
+                             //.AsciiPixelStart=asciiaa.PixelStart,
                              .videoConfig = *videoConfig,
                              .AsciiBmp = &asciiaa};
 

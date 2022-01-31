@@ -5,6 +5,7 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include "ui/BootingUI.h"
 
+#pragma pack(1)
 typedef struct
 {
     EFI_PHYSICAL_ADDRESS       FrameBufferBase;
@@ -13,6 +14,7 @@ typedef struct
     UINT32                     VerticalResolution;
     UINT32                     PixelsPerScanLine;
 }VideoConfig;
+#pragma pack()
 
 //VideoConfig *videoConfig;
 
