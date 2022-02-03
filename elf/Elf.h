@@ -1,3 +1,4 @@
+#include <Uefi.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 
@@ -16,8 +17,19 @@
 #pragma pack(1)
 typedef struct
 {
+    UINTN BufferSize;
+    VOID *Buffer;
+    UINTN MapSize;
+    UINTN MapKey;
+    UINTN DescriptorSize;
+    UINT32 DescriptorVersion;
+} MEMORY_MAP;
+
+typedef struct
+{
     VideoConfig videoConfig;
     BMPConfig *AsciiBmp;
+    MEMORY_MAP memoryMap;
 } BootConfig;
 #pragma pack()
 
@@ -117,4 +129,8 @@ EFI_STATUS CheckELF(
 EFI_STATUS LoadSegments(
     IN EFI_PHYSICAL_ADDRESS KernelBufferBase,
     OUT EFI_PHYSICAL_ADDRESS *KernelEntry
+);
+EFI_STATUS ExitBootServices(
+        EFI_HANDLE ImageHandle,
+        OUT MEMORY_MAP *MemoryMap
 );

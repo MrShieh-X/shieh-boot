@@ -12,14 +12,20 @@ EFI_STATUS loadKernel(
         return Status;
     }
 
+
+
+
+
     BMPConfig asciiaa = getAscii(ImageHandle, videoConfig);
+    MEMORY_MAP memoryMap;
     BootConfig bootConfig = {//.FrameBufferBase = videoConfig->FrameBufferBase,
                              //.FrameBufferSize = videoConfig->FrameBufferSize,
                              //.HorizontalResolution = videoConfig->HorizontalResolution,
                              //.VerticalResolution = videoConfig->VerticalResolution,
                              //.AsciiPixelStart=asciiaa.PixelStart,
                              .videoConfig = *videoConfig,
-                             .AsciiBmp = &asciiaa};
+                             .AsciiBmp = &asciiaa,
+                             .memoryMap=memoryMap};
 
     /*for (UINT64 i; i <  640;i++)
     {
@@ -32,14 +38,52 @@ EFI_STATUS loadKernel(
 
     addProgress(Gop);
 
+    bootConfig.memoryMap.BufferSize = 4096;
+    bootConfig.memoryMap.Buffer = NULL;
+    bootConfig.memoryMap.MapSize = 4096;
+    bootConfig.memoryMap.MapKey = 0;
+    bootConfig.memoryMap.DescriptorSize = 0;
+    bootConfig.memoryMap.DescriptorVersion = 0;
+    Status=ExitBootServices(ImageHandle,&bootConfig.memoryMap);
+
     if (0)
         Print(L"Executing kernel...\n");
+
     UINT64(*KernelEntry)
     (BootConfig * bootConfig) = (UINT64(*)(BootConfig * bootConfig)) KernelEntryPoint;
     UINT64 x = KernelEntry(&bootConfig);
 
     Print(L"Returned value from kernel: %d\n", x);
     return EFI_SUCCESS;
+}
+
+EFI_STATUS ExitBootServices(EFI_HANDLE ImageHandle, OUT MEMORY_MAP *MemoryMap){
+    EFI_STATUS Status=EFI_SUCCESS;
+    Status = gBS->AllocatePool(EfiLoaderData, MemoryMap->BufferSize, &MemoryMap->Buffer);
+    if (EFI_ERROR(Status))
+    {
+        if(0)Print(L"Failed to allocate memory to get memory map. Status: %d\n",Status);
+        return Status;
+    }
+    Status = gBS->GetMemoryMap(
+            &MemoryMap->MapSize,
+            (EFI_MEMORY_DESCRIPTOR*)MemoryMap->Buffer,
+            &MemoryMap->MapKey,
+            &MemoryMap->DescriptorSize,
+            &MemoryMap->DescriptorVersion);
+
+    if (EFI_ERROR(Status))
+    {
+        if(0)Print(L"Failed to get memory map. Status: %d\n",Status);
+        return Status;
+    }
+
+    Status = gBS->ExitBootServices(ImageHandle, MemoryMap->MapKey);
+    if (EFI_ERROR(Status))
+    {
+        if(0)Print(L"Failed to exit boot services. Status: %d\n",Status);
+    }
+    return Status;
 }
 
 BMPConfig getAscii(
