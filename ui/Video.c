@@ -43,7 +43,7 @@ EFI_STATUS setResolution(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Protocol, IN EFI_HANDL
       Status = Protocol->QueryMode(Protocol, i, &ModeInfoSize, &ModeInfo);
       H = ModeInfo->HorizontalResolution;
       V = ModeInfo->VerticalResolution;
-      if (/*((H == 1920) && (V == 1080)) ||*/ ((H == 1440) && (V == 900)))
+      if (/*((H == 1920) && (V == 1080))*/ || ((H == 1440) && (V == 900)))
       {
          ModeIndex = i;
          break;
