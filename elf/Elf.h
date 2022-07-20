@@ -1,12 +1,15 @@
+#ifndef __ELF_ELF_H__
+#define __ELF_ELF_H__
+
 #include <Uefi.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 
 #include "utils/File.h"
 #include "utils/Utils.h"
-#include "constants/ConstantFiles.h"
 #include "utils/Protocols.h"
-#include "Video.h"
+#include "constants/ConstantFiles.h"
+#include "ui/Video.h"
 
 #define ELF_32 1
 #define ELF_64 2
@@ -15,8 +18,7 @@
 #define PT_LOAD 1
 
 #pragma pack(1)
-typedef struct
-{
+typedef struct {
     UINTN BufferSize;
     VOID *Buffer;
     UINTN MapSize;
@@ -25,16 +27,14 @@ typedef struct
     UINT32 DescriptorVersion;
 } MEMORY_MAP;
 
-typedef struct
-{
+typedef struct {
     VideoConfig videoConfig;
     BMPConfig *AsciiBmp;
     MEMORY_MAP memoryMap;
 } BootConfig;
 #pragma pack()
 
-typedef struct
-{
+typedef struct {
     UINT32 Magic;      //0x00
     UINT8 Format;      //0x04,32 or 64 bits format 1=32, 2=64
     UINT8 Endianness;  //0x05
@@ -58,8 +58,7 @@ typedef struct
 
 } ELF_HEADER_32;
 
-typedef struct
-{
+typedef struct {
     UINT32 Magic;      //0x00
     UINT8 Format;      //0x04,32 or 64 bits format
     UINT8 Endianness;  //0x05
@@ -82,8 +81,7 @@ typedef struct
     UINT16 SNameIndex; //0x3E, index of entry that contains the section names
 } ELF_HEADER_64;
 
-typedef struct
-{
+typedef struct {
     UINT32 Type;         //0x00, type of segment
     UINT32 Offset;       //0x04, Offset of the segment in the file image
     UINT32 VAddress;     //0x08, Virtual address of the segment in memory
@@ -94,8 +92,7 @@ typedef struct
     UINT32 Align;        //0x1C, 0 and 1
 } PROGRAM_HEADER_32;
 
-typedef struct
-{
+typedef struct {
     UINT32 Type;         //0x00, type of segment
     UINT32 Flags;        //0x04 Segment-dependent flags
     UINT64 Offset;       //0x08
@@ -108,29 +105,32 @@ typedef struct
 } PROGRAM_HEADER_64;
 
 BMPConfig getAscii(
-    IN EFI_HANDLE ImageHandle,
-    IN VideoConfig *videoConfig);
+        IN EFI_HANDLE ImageHandle,
+        IN VideoConfig *videoConfig);
 
 EFI_STATUS loadKernel(
-    IN EFI_HANDLE ImageHandle,
-    IN VideoConfig *videoConfig,
-    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
+        IN EFI_HANDLE ImageHandle,
+        IN VideoConfig *videoConfig,
+        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
 );
 
 EFI_STATUS Relocate(
-    IN EFI_HANDLE ImageHandle,
-    OUT EFI_PHYSICAL_ADDRESS *KernelEntry,
-    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop);
+        IN EFI_HANDLE ImageHandle,
+        OUT EFI_PHYSICAL_ADDRESS *KernelEntry,
+        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop);
 
 EFI_STATUS CheckELF(
-    IN EFI_PHYSICAL_ADDRESS KernelBuffer
+        IN EFI_PHYSICAL_ADDRESS KernelBuffer
 );
 
 EFI_STATUS LoadSegments(
-    IN EFI_PHYSICAL_ADDRESS KernelBufferBase,
-    OUT EFI_PHYSICAL_ADDRESS *KernelEntry
+        IN EFI_PHYSICAL_ADDRESS KernelBufferBase,
+        OUT EFI_PHYSICAL_ADDRESS *KernelEntry
 );
+
 EFI_STATUS ExitBootServices(
         EFI_HANDLE ImageHandle,
         OUT MEMORY_MAP *MemoryMap
 );
+
+#endif

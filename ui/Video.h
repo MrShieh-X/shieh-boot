@@ -1,3 +1,6 @@
+#ifndef __UI_VIDEO_H__
+#define __UI_VIDEO_H__
+
 #include <Library/BaseMemoryLib.h>
 #include <Protocol/GraphicsOutput.h>
 #include <Uefi.h>
@@ -6,14 +9,13 @@
 #include "ui/BootingUI.h"
 
 #pragma pack(1)
-typedef struct
-{
-    EFI_PHYSICAL_ADDRESS       FrameBufferBase;
-    UINTN                      FrameBufferSize;
-    UINT32                     HorizontalResolution;
-    UINT32                     VerticalResolution;
-    UINT32                     PixelsPerScanLine;
-}VideoConfig;
+typedef struct {
+    EFI_PHYSICAL_ADDRESS FrameBufferBase;
+    UINTN FrameBufferSize;
+    UINT32 HorizontalResolution;
+    UINT32 VerticalResolution;
+    UINT32 PixelsPerScanLine;
+} VideoConfig;
 #pragma pack()
 
 //VideoConfig *videoConfig;
@@ -23,5 +25,7 @@ EFIAPI
 initVideo(IN EFI_HANDLE ImageHandle, EFI_GRAPHICS_OUTPUT_PROTOCOL *graphicsOutputProtocol, VideoConfig *videoConfig);
 
 EFI_STATUS setResolution(
-    IN EFI_GRAPHICS_OUTPUT_PROTOCOL *protocol,
-    IN EFI_HANDLE ImageHandle);
+        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *protocol,
+        IN EFI_HANDLE ImageHandle);
+
+#endif
