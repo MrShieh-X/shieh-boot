@@ -3,7 +3,8 @@
 EFI_STATUS ReadFile(
         IN EFI_FILE_PROTOCOL *FileProtocol,
         IN CHAR16 *FileName,
-        OUT EFI_PHYSICAL_ADDRESS *FileBase) {
+        OUT EFI_PHYSICAL_ADDRESS *FileBase,
+        OUT UINTN *FileSize) {
     //if(0)Print(L"File: Reading file: %s\n", FileName);
     EFI_STATUS Status = EFI_SUCCESS;
     EFI_FILE_INFO *FileInfo;
@@ -63,6 +64,7 @@ EFI_STATUS ReadFile(
 
     gBS->FreePool(FileInfo);
     *FileBase = FileBufferAddress;
+    *FileSize = ReadSize;
     return Status;
 }
 

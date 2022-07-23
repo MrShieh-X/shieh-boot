@@ -12,9 +12,32 @@ BootMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
     VideoConfig videoConfig;
     initVideo(ImageHandle, graphicsOutputProtocol, &videoConfig);
 
-    drawLogo(ImageHandle, graphicsOutputProtocol);
+    //drawLogo(ImageHandle, graphicsOutputProtocol);
     //for (int i = 1; i < 11;i++){
     //}
+
+    Print(L"\n");
+    UINTN Count;
+    EFI_HANDLE *Buffer = NULL;
+    EFI_STATUS Status = EFI_SUCCESS;
+    getAllPartitions(&Count, &Buffer);
+    for (int i = 0; i < Count; i++) {
+        EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfs;
+        Status = gBS->OpenProtocol(
+                Buffer[i],
+                &gEfiSimpleFileSystemProtocolGuid,
+                (VOID **) &sfs,
+                ImageHandle,
+                NULL,
+                EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+        if (EFI_ERROR(Status)) {
+            if (isPrint())
+                Print(L"Error: Failed to open protocol: \"%s\" Status: %d\n", "SimpleFileSystemProtocol", Status);
+            continue;
+        }
+        Print(L"%d: %s\n", i + 1, GetVolumeLabel(sfs));
+    }
+    Print(L"\n");
 
 
     //executeKernel(ImageHandle);

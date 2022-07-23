@@ -15,7 +15,8 @@
 EFI_STATUS ReadFile(
         IN EFI_FILE_PROTOCOL *FileProtocol,
         IN CHAR16 *FileName,
-        OUT EFI_PHYSICAL_ADDRESS *FileBase);
+        OUT EFI_PHYSICAL_ADDRESS *FileBase,
+        OUT UINTN *FileSize);
 
 int isPrintF();
 

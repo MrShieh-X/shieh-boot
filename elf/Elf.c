@@ -13,7 +13,6 @@ EFI_STATUS loadKernel(
 
     BMPConfig asciiaa = getAscii(ImageHandle, videoConfig);
     MEMORY_MAP memoryMap;
-    Print(L"16");
     BootConfig bootConfig = {//.FrameBufferBase = videoConfig->FrameBufferBase,
             //.FrameBufferSize = videoConfig->FrameBufferSize,
             //.HorizontalResolution = videoConfig->HorizontalResolution,
@@ -22,7 +21,6 @@ EFI_STATUS loadKernel(
             .videoConfig = *videoConfig,
             .AsciiBmp = &asciiaa,
             .memoryMap=memoryMap};
-    Print(L"25");
 
     /*for (UINT64 i; i <  640;i++)
     {
@@ -34,7 +32,14 @@ EFI_STATUS loadKernel(
     //Print(L"AsciiAddress: %lld\n", bootConfig.AsciiBmp->PixelStart);
 
     addProgress(Gop);
-    Print(L"67");
+
+    {
+        UINTN Index;
+        Status = gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &Index);
+
+        EFI_INPUT_KEY Key;
+        Status = gST->ConIn->ReadKeyStroke(gST->ConIn, &Key);
+    }
 
     bootConfig.memoryMap.BufferSize = 4096;
     bootConfig.memoryMap.Buffer = NULL;
@@ -43,10 +48,8 @@ EFI_STATUS loadKernel(
     bootConfig.memoryMap.DescriptorSize = 0;
     bootConfig.memoryMap.DescriptorVersion = 0;
     Status = ExitBootServices(ImageHandle, &bootConfig.memoryMap);
-    Print(L"46");
 
     if (isPrint()) Print(L"Executing kernel...\n");
-    Print(L"49");
 
     UINT64(*KernelEntry)(BootConfig * bootConfig) = (UINT64(*)(BootConfig *bootConfig)) KernelEntryPoint;
     UINT64 x = KernelEntry(&bootConfig);
@@ -100,7 +103,8 @@ BMPConfig getAscii(
         return config;
     }
 
-    Status = ReadFile(fp, ASCII, &address);
+    UINTN FileSize;
+    Status = ReadFile(fp, ASCII, &address, &FileSize);
     if (EFI_ERROR(Status)) {
         if (isPrint()) Print(L"Unable to read ASCII bmp file: Unable to read file\n");
         config.Height = -1;
@@ -135,7 +139,8 @@ EFI_STATUS Relocate(
         return Status;
     }
     EFI_PHYSICAL_ADDRESS kernelAddress;
-    Status = ReadFile(file, KERNEL, &kernelAddress);
+    UINTN FileSize;
+    Status = ReadFile(file, KERNEL, &kernelAddress, &FileSize);
     if (EFI_ERROR(Status)) {
         if (isPrint()) Print(L"Unable to load kernel: Failed to readFile.\n");
         return Status;
@@ -144,7 +149,7 @@ EFI_STATUS Relocate(
 
     if (isPrint()) Print(L"Checking kernel...\n");
 
-    Status = CheckELF(kernelAddress);
+    Status = CheckELF(kernelAddress, FileSize);
     if (EFI_ERROR(Status)) {
         return Status;
     }
@@ -158,7 +163,8 @@ EFI_STATUS Relocate(
 }
 
 EFI_STATUS CheckELF(
-        IN EFI_PHYSICAL_ADDRESS KernelBuffer) {
+        IN EFI_PHYSICAL_ADDRESS KernelBuffer,
+        IN UINTN KernelFileSize) {
     EFI_STATUS Status = EFI_SUCCESS;
 
     UINT32 Magic = GetValue(KernelBuffer, 0x00, 4);
@@ -171,7 +177,17 @@ EFI_STATUS CheckELF(
     if (Format != ELF_64) {
         if (isPrint()) Print(L"Unable to load kernel: Kernel is not 64 bit!\n");
         Status = NOT_64_BIT;
+        return Status;
     }
+    /*UINT8 Sign1 = GetValue(KernelBuffer,KernelFileSize-5,1);
+    Print(L"183: %d\n",Sign1);
+
+    if(Sign1!=0x534f6865696853){
+        if (isPrint()) Print(L"Unable to load kernel: This kernel is not ShiehOS's!\n");
+        Status = NOT_SHIEHOS;
+        return Status;
+    }
+*/
 
     return Status;
 }

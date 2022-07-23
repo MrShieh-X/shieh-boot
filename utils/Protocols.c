@@ -35,11 +35,14 @@ EFI_GRAPHICS_OUTPUT_PROTOCOL *getGraphicsOutputProtocol(
     return GraphicsOutputProtocol;
 }
 
+/**
+ * 获得EFI文件所在分区的 SimpleFileSystemProtocol
+ **/
 EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *getSimpleFileSystemProtocol(
         IN EFI_HANDLE ImageHandle
 ) {
     EFI_STATUS Status = EFI_SUCCESS;
-    UINTN HandlesCount = 0;
+    /*UINTN HandlesCount = 0;
     EFI_HANDLE *Buffer = NULL;
     Status = gBS->LocateHandleBuffer(
             ByProtocol,
@@ -51,12 +54,24 @@ EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *getSimpleFileSystemProtocol(
         if (isPrint())
             Print(L"Error: Failed to locate handle buffer: \"%s\" Status: %d\n", "SimpleFileSystemProtocol", Status);
         return NULL;
+    }*/
+
+
+    EFI_LOADED_IMAGE_PROTOCOL *LoadedImage;
+    LoadedImage = NULL;
+    Status = gBS->HandleProtocol(
+            ImageHandle,
+            &gEfiLoadedImageProtocolGuid,
+            (VOID **) &LoadedImage
+    );
+    if (EFI_ERROR(Status)) {
+        if (isPrint())
+            Print(L"Error: Failed to get the partition where the EFI file is located. Status: %d\n", Status);
+        return NULL;
     }
-
-
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfs;
     Status = gBS->OpenProtocol(
-            Buffer[5],
+            LoadedImage->DeviceHandle,
             &gEfiSimpleFileSystemProtocolGuid,
             (VOID **) &sfs,
             ImageHandle,

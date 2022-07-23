@@ -7,6 +7,7 @@
 #include "constants/ConstantFiles.h"
 #include "utils/Utils.h"
 #include "utils/Protocols.h"
+#include "utils/Part.h"
 //#include "ui/Video.h"
 #include "elf/Elf.h"
 

@@ -16,6 +16,7 @@
 #define NOT_ELF -1
 #define NOT_64_BIT -2
 #define PT_LOAD 1
+#define NOT_SHIEHOS -3
 
 #pragma pack(1)
 typedef struct {
@@ -120,7 +121,8 @@ EFI_STATUS Relocate(
         IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop);
 
 EFI_STATUS CheckELF(
-        IN EFI_PHYSICAL_ADDRESS KernelBuffer
+        IN EFI_PHYSICAL_ADDRESS KernelBuffer,
+        IN UINTN KernelFileSize
 );
 
 EFI_STATUS LoadSegments(

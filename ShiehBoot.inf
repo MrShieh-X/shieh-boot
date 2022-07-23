@@ -11,6 +11,7 @@
     utils/Protocols.c
     utils/Utils.c
     utils/File.c
+    utils/Part.c
     ui/Video.c
     ui/BootingUI.c
     elf/Elf.c
@@ -22,5 +23,10 @@
     UefiApplicationEntryPoint
     UefiLib
 
+[Protocols]
+  gEfiLoadedImageProtocolGuid         ## CONSUMES
+
+
 [Guids]
     gEfiFileInfoGuid
+    gEfiFileSystemVolumeLabelInfoIdGuid

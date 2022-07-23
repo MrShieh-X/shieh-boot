@@ -53,7 +53,8 @@ EFI_STATUS drawLogo(IN EFI_HANDLE ImageHandle,
         return Status;
     }
 
-    Status = ReadFile(fp, Logo, &LogoAddress);
+    UINTN FileSize;
+    Status = ReadFile(fp, Logo, &LogoAddress, &FileSize);
     if (EFI_ERROR(Status)) {
         if (isPrint())Print(L"Unable to draw boot logo: Unable to read file\n");
         return Status;
