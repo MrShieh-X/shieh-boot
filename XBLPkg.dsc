@@ -1,11 +1,11 @@
 [Defines]
-    PLATFORM_NAME = ShiehBoot
+    PLATFORM_NAME = XBL
     PLATFORM_GUID = b2381a93-44ef-481c-9f47-10de5593d30d
     PLATFORM_VERSION = 0.1
     DSC_SPECIFICATION = 0x00010005
     SUPPORTED_ARCHITECTURES = X64
     BUILD_TARGETS = DEBUG|RELEASE
-    OUTPUT_DIRECTORY = ShiehBootPkg/Build
+    OUTPUT_DIRECTORY = XBLPkg/Build
 
 [LibraryClasses]
     UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
@@ -21,6 +21,7 @@
     RegisterFilterLib|MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
     DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
     UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
+    ResetSystemLib|MdeModulePkg/Library/BaseResetSystemLibNull/BaseResetSystemLibNull.inf
 
 [Components]
-    ShiehBootPkg/ShiehBoot.inf
+    XBLPkg/XBL.inf

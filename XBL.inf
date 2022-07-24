@@ -1,27 +1,29 @@
 [Defines]
     INF_VERSION = 0x00010006
-    BASE_NAME = ShiehBoot
+    BASE_NAME = XBL
     FILE_GUID = cda52c8a-9984-4506-937c-2627743a05bc
     MODULE_TYPE = UEFI_APPLICATION
     VERSION_STRING = 0.1
     ENTRY_POINT = BootMain
 
 [Sources]
-    ShiehBoot.c
+    XBL.c
     utils/Protocols.c
     utils/Utils.c
     utils/File.c
     utils/Part.c
+    utils/BMP.c
     ui/Video.c
-    ui/BootingUI.c
     elf/Elf.c
 
 [Packages]
     MdePkg/MdePkg.dec
+    MdeModulePkg/MdeModulePkg.dec
 
 [LibraryClasses]
     UefiApplicationEntryPoint
     UefiLib
+    ResetSystemLib
 
 [Protocols]
   gEfiLoadedImageProtocolGuid         ## CONSUMES

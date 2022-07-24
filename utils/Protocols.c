@@ -121,9 +121,11 @@ EFI_FILE_PROTOCOL *getFileProtocol(
 
     if (EFI_ERROR(*Status)) {
         if (statusCodeEqualsTo(*Status, 14)) {
-            if (isPrint())Print(L"Error: Failed to open file: %s (not found).\n", FileName);
+            if (isPrint())
+                Print(L"Error: Failed to open file: %s (not found).\n", FileName);
         } else {
-            if (isPrint())Print(L"Error: Failed to open file: %s, Status: %d\n", FileName, *Status);
+            if (isPrint())
+                Print(L"Error: Failed to open file: %s, Status: %d\n", FileName, *Status);
         }
         return NULL;
     }

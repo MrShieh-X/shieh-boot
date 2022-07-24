@@ -4,6 +4,8 @@
 #include <Uefi.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 
 #include "utils/File.h"
 #include "utils/Utils.h"
@@ -105,20 +107,28 @@ typedef struct {
 
 } PROGRAM_HEADER_64;
 
+typedef struct {
+    CHAR16 *PartitionName;
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol;
+    EFI_FILE_PROTOCOL *ElfFileProtocol;
+}BOOTABLE;
+
 BMPConfig getAscii(
         IN EFI_HANDLE ImageHandle,
-        IN VideoConfig *videoConfig);
+        IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol);
 
 EFI_STATUS loadKernel(
         IN EFI_HANDLE ImageHandle,
         IN VideoConfig *videoConfig,
-        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
+        IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol,
+        IN EFI_FILE_PROTOCOL *ElfFileProtocol
 );
 
 EFI_STATUS Relocate(
         IN EFI_HANDLE ImageHandle,
         OUT EFI_PHYSICAL_ADDRESS *KernelEntry,
-        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop);
+        IN EFI_FILE_PROTOCOL *ElfFileProtocol
+);
 
 EFI_STATUS CheckELF(
         IN EFI_PHYSICAL_ADDRESS KernelBuffer,

@@ -6,7 +6,7 @@
 #include <Uefi.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include "ui/BootingUI.h"
+#include "utils/BMP.h"
 
 #pragma pack(1)
 typedef struct {

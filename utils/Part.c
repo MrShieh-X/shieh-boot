@@ -250,7 +250,7 @@ GetVolumeLabel(
         FreePool(VolumeInfo);
     }
 
-    return AllocateCopyPool(sizeof(L"NULL"), L"NULL");
+    return AllocateCopyPool(sizeof(L"Noname Partition"), L"Noname Partition");
 }
 
 /**

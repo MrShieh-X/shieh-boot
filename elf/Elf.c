@@ -3,15 +3,16 @@
 EFI_STATUS loadKernel(
         IN EFI_HANDLE ImageHandle,
         IN VideoConfig *videoConfig,
-        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop) {
+        IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol,
+        IN EFI_FILE_PROTOCOL *ElfFileProtocol) {
     EFI_PHYSICAL_ADDRESS KernelEntryPoint;
-    EFI_STATUS Status = Relocate(ImageHandle, &KernelEntryPoint, Gop);
+    EFI_STATUS Status = Relocate(ImageHandle, &KernelEntryPoint,ElfFileProtocol);
     if (EFI_ERROR(Status)) {
         return Status;
     }
 
 
-    BMPConfig asciiaa = getAscii(ImageHandle, videoConfig);
+    BMPConfig asciiaa = getAscii(ImageHandle,FileSystemProtocol);
     MEMORY_MAP memoryMap;
     BootConfig bootConfig = {//.FrameBufferBase = videoConfig->FrameBufferBase,
             //.FrameBufferSize = videoConfig->FrameBufferSize,
@@ -31,14 +32,13 @@ EFI_STATUS loadKernel(
 
     //Print(L"AsciiAddress: %lld\n", bootConfig.AsciiBmp->PixelStart);
 
-    addProgress(Gop);
-
     {
         UINTN Index;
         Status = gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &Index);
 
         EFI_INPUT_KEY Key;
         Status = gST->ConIn->ReadKeyStroke(gST->ConIn, &Key);
+
     }
 
     bootConfig.memoryMap.BufferSize = 4096;
@@ -86,12 +86,11 @@ EFI_STATUS ExitBootServices(EFI_HANDLE ImageHandle, OUT MEMORY_MAP *MemoryMap) {
 
 BMPConfig getAscii(
         IN EFI_HANDLE ImageHandle,
-        IN VideoConfig *videoConfig) {
+        IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol) {
 
     EFI_STATUS Status = EFI_SUCCESS;
-    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *simpleFileSystemProtocol = getSimpleFileSystemProtocol(ImageHandle);
     //EFI_STATUS Status;
-    EFI_FILE_PROTOCOL *fp = getFileProtocol(simpleFileSystemProtocol, ASCII, EFI_FILE_MODE_READ, &Status);
+    EFI_FILE_PROTOCOL *fp = getFileProtocol(FileSystemProtocol, ASCII, EFI_FILE_MODE_READ, &Status);
     EFI_PHYSICAL_ADDRESS address;
 
     BMPConfig config;
@@ -125,40 +124,38 @@ BMPConfig getAscii(
 EFI_STATUS Relocate(
         IN EFI_HANDLE ImageHandle,
         OUT EFI_PHYSICAL_ADDRESS *KernelEntry,
-        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop) {
+        IN EFI_FILE_PROTOCOL *ElfFileProtocol
+) {
     if (isPrint()) Print(L"Reading kernel...\n");
-    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfsp = getSimpleFileSystemProtocol(ImageHandle);
+
     EFI_STATUS Status = EFI_SUCCESS;
+    /*EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *sfsp = getSimpleFileSystemProtocol(ImageHandle);
     if (sfsp == NULL) {
         if (isPrint()) Print(L"Failed to load kernel: Unable to getSimpleFileSystemProtocol\n");
         return EFI_LOAD_ERROR;
     }
-    EFI_FILE_PROTOCOL *file = getFileProtocol(sfsp, KERNEL, EFI_FILE_MODE_READ, &Status);
+    EFI_FILE_PROTOCOL *FILE = getFileProtocol(sfsp, KERNEL, EFI_FILE_MODE_READ, &Status);
     if (EFI_ERROR(Status)) {
         if (isPrint()) Print(L"Unable to load kernel: Failed to getFileProtocol.\n");
         return Status;
-    }
+    }*/
     EFI_PHYSICAL_ADDRESS kernelAddress;
     UINTN FileSize;
-    Status = ReadFile(file, KERNEL, &kernelAddress, &FileSize);
+    Status = ReadFile(ElfFileProtocol, KERNEL, &kernelAddress, &FileSize);
     if (EFI_ERROR(Status)) {
         if (isPrint()) Print(L"Unable to load kernel: Failed to readFile.\n");
         return Status;
     }
-    addProgress(Gop);
-
     if (isPrint()) Print(L"Checking kernel...\n");
 
     Status = CheckELF(kernelAddress, FileSize);
     if (EFI_ERROR(Status)) {
         return Status;
     }
-    addProgress(Gop);
 
     if (isPrint()) Print(L"Loading segments for kernel...\n");
 
     Status = LoadSegments(kernelAddress, KernelEntry);
-    addProgress(Gop);
     return Status;
 }
 

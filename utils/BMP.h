@@ -1,5 +1,5 @@
-#ifndef __UI_BOOTING_UI_H__
-#define __UI_BOOTING_UI_H__
+#ifndef __UTILS_BMP_H__
+#define __UTILS_BMP_H__
 
 #include <Uefi.h>
 #include <Library/UefiLib.h>
@@ -22,13 +22,6 @@ typedef struct {
 } BMPConfig;
 
 #pragma pack()
-
-EFI_STATUS addProgress(
-        IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop);
-
-EFI_STATUS drawLogo(
-        IN EFI_HANDLE ImageHandle,
-        EFI_GRAPHICS_OUTPUT_PROTOCOL *gop);
 
 EFI_STATUS BmpTransform(
         IN EFI_PHYSICAL_ADDRESS BmpBase,
