@@ -6,13 +6,13 @@ EFI_STATUS loadKernel(
         IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol,
         IN EFI_FILE_PROTOCOL *ElfFileProtocol) {
     EFI_PHYSICAL_ADDRESS KernelEntryPoint;
-    EFI_STATUS Status = Relocate(ImageHandle, &KernelEntryPoint,ElfFileProtocol);
+    EFI_STATUS Status = Relocate(ImageHandle, &KernelEntryPoint, ElfFileProtocol);
     if (EFI_ERROR(Status)) {
         return Status;
     }
 
 
-    BMPConfig asciiaa = getAscii(ImageHandle,FileSystemProtocol);
+    BMPConfig asciiaa = getAscii(ImageHandle, FileSystemProtocol);
     MEMORY_MAP memoryMap;
     BootConfig bootConfig = {//.FrameBufferBase = videoConfig->FrameBufferBase,
             //.FrameBufferSize = videoConfig->FrameBufferSize,
@@ -21,7 +21,8 @@ EFI_STATUS loadKernel(
             //.AsciiPixelStart=asciiaa.PixelStart,
             .videoConfig = *videoConfig,
             .AsciiBmp = &asciiaa,
-            .memoryMap=memoryMap};
+            .memoryMap=memoryMap,
+            .asciiHexAddress=getAsciiHex(ImageHandle, FileSystemProtocol)};
 
     /*for (UINT64 i; i <  640;i++)
     {
@@ -119,6 +120,31 @@ BMPConfig getAscii(
         return config;
     }
     return config;
+}
+
+UINT64 getAsciiHex(
+        IN EFI_HANDLE ImageHandle,
+        IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol) {
+
+    EFI_STATUS Status = EFI_SUCCESS;
+    //EFI_STATUS Status;
+    EFI_FILE_PROTOCOL *fp = getFileProtocol(FileSystemProtocol, ASCII_HEX, EFI_FILE_MODE_READ, &Status);
+    EFI_PHYSICAL_ADDRESS address;
+
+
+    if ((fp) == NULL) {
+        if (isPrint()) Print(L"Unable to read ASCII hex file: Unable to get file protocol, status: %d\n", Status);
+        return -1;
+    }
+
+    UINTN FileSize;
+    Status = ReadFile(fp, ASCII_HEX, &address, &FileSize);
+    if (EFI_ERROR(Status)) {
+        if (isPrint()) Print(L"Unable to read ASCII hex file: Unable to read file\n");
+        return -1;
+    }
+
+    return address;
 }
 
 EFI_STATUS Relocate(

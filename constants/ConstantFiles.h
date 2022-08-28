@@ -5,5 +5,6 @@
 #define BOOT_LOGO_4X3 L"\\resources\\images\\boot_logo_4x3.bmp"
 #define KERNEL L"\\system\\kernel\\kernel.elf"
 #define ASCII L"\\system\\ascii.bmp"
+#define ASCII_HEX L"\\system\\ascii.hex"
 
 #endif
