@@ -32,7 +32,6 @@ typedef struct {
 
 typedef struct {
     VideoConfig videoConfig;
-    BMPConfig *AsciiBmp;
     MEMORY_MAP memoryMap;
     UINT64 asciiHexAddress;
 } BootConfig;
@@ -114,9 +113,10 @@ typedef struct {
     EFI_FILE_PROTOCOL *ElfFileProtocol;
 } BOOTABLE;
 
+/*
 BMPConfig getAscii(
         IN EFI_HANDLE ImageHandle,
-        IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol);
+        IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol);*/
 
 UINT64 getAsciiHex(
         IN EFI_HANDLE ImageHandle,

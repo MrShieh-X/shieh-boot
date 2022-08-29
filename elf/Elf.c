@@ -12,7 +12,7 @@ EFI_STATUS loadKernel(
     }
 
 
-    BMPConfig asciiaa = getAscii(ImageHandle, FileSystemProtocol);
+    //BMPConfig asciiaa = getAscii(ImageHandle, FileSystemProtocol);
     MEMORY_MAP memoryMap;
     BootConfig bootConfig = {//.FrameBufferBase = videoConfig->FrameBufferBase,
             //.FrameBufferSize = videoConfig->FrameBufferSize,
@@ -20,7 +20,7 @@ EFI_STATUS loadKernel(
             //.VerticalResolution = videoConfig->VerticalResolution,
             //.AsciiPixelStart=asciiaa.PixelStart,
             .videoConfig = *videoConfig,
-            .AsciiBmp = &asciiaa,
+            //.AsciiBmp = &asciiaa,
             .memoryMap=memoryMap,
             .asciiHexAddress=getAsciiHex(ImageHandle, FileSystemProtocol)};
 
@@ -85,7 +85,7 @@ EFI_STATUS ExitBootServices(EFI_HANDLE ImageHandle, OUT MEMORY_MAP *MemoryMap) {
     return Status;
 }
 
-BMPConfig getAscii(
+/*BMPConfig getAscii(
         IN EFI_HANDLE ImageHandle,
         IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *FileSystemProtocol) {
 
@@ -120,7 +120,7 @@ BMPConfig getAscii(
         return config;
     }
     return config;
-}
+}*/
 
 UINT64 getAsciiHex(
         IN EFI_HANDLE ImageHandle,
