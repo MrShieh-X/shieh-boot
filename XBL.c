@@ -94,6 +94,8 @@ BootMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
                 gST->ConOut->ClearScreen(gST->ConOut);
                 BOOTABLE bootable = bootables[Choose];
                 loadKernel(ImageHandle, &videoConfig, bootable.FileSystemProtocol, bootable.ElfFileProtocol);
+                while (1) {
+                }
                 break;
             }
             continue;

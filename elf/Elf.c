@@ -202,15 +202,15 @@ EFI_STATUS CheckELF(
         Status = NOT_64_BIT;
         return Status;
     }
-    /*UINT8 Sign1 = GetValue(KernelBuffer,KernelFileSize-5,1);
-    Print(L"183: %d\n",Sign1);
+    UINTN Sign1 = GetValue(KernelBuffer, KernelFileSize - 10, 4);
+    UINTN Sign2 = GetValue(KernelBuffer, KernelFileSize - 6, 3);
 
-    if(Sign1!=0x534f6865696853){
+    if (Sign1 != 0x65696853 || Sign2 != 0x534F68) {
         if (isPrint()) Print(L"Unable to load kernel: This kernel is not ShiehOS's!\n");
         Status = NOT_SHIEHOS;
         return Status;
     }
-*/
+
 
     return Status;
 }
